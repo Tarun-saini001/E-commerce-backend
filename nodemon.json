@@ -1,0 +1,9 @@
+{
+    "watch": [
+        "app",
+        "bin",
+        "docs"
+    ],
+    "ext": "ts",
+    "exec": "ts-node -r tsconfig-paths/register ./bin/server.ts"
+}

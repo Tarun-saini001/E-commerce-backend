@@ -1,0 +1,1 @@
+git pull && tsc && pm2 reload 13
