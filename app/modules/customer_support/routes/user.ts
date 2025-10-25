@@ -1,12 +1,22 @@
 import { Router } from "express";
+import Validator from "@app/utils/validateRequest";
 import { verify } from "@app/middleware/checkRole";
 import { USER_TYPES } from "@app/config/constants";
-import AddonController from "../controllers/user";
+import {
+    sendMessageSchema,
+    supportSchema
+} from "../validations/customerSupport";
+import CustomerSupportController from "../controllers/user";
 
 const router = Router();
-router.use(verify(USER_TYPES.USER))
+router.use(verify(USER_TYPES.ADMIN));
 
-router.get("/:id", AddonController.getAddon);
-router.get("/", AddonController.getAddonList);
+router.post("/add", Validator(supportSchema), CustomerSupportController.createTicket);
+router.put("/:id", Validator(supportSchema), CustomerSupportController.updateTicket);
+router.get("/:id", CustomerSupportController.getTicket);
+router.get("/", CustomerSupportController.listTickets);
+router.delete("/:id", CustomerSupportController.deleteTicket);
+router.post("/:id/message", Validator(sendMessageSchema), CustomerSupportController.sendMessage);
+router.delete("/:id/message/:messageId", CustomerSupportController.deleteMessage);
 
 export default router;

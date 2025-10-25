@@ -1,17 +1,23 @@
 import mongoose, { Schema, InferSchemaType } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 import { myCustomLabels } from "@app/utils/pagination";
+import { SUPPORT_STATUS } from "@app/config/constants";
 
 mongoosePaginate.paginate.options = { customLabels: myCustomLabels };
 
 const customerSupportSchema = new Schema(
     {
-        name: { type: String, required: true },
+        refNo: { type: String, unique: true },
+        userId: { type: Schema.Types.ObjectId, ref: "User" },
+        subject: { type: String },
         description: { type: String },
-        costToDealer: { type: Number },
-        sellingPrice: { type: Number },
-        termLength: { type: Number },
-        isDeleted: { type: Boolean, default: false },
+        conversation: [{
+            sender: { type: Schema.Types.ObjectId, ref: "User" },
+            message: { type: String },
+            timestamp: { type: Date, default: Date.now }
+        }],
+        status: { type: Number, enum: Object.values(SUPPORT_STATUS) },
+        attachments: [{ type: String }],
     },
     { timestamps: true }
 );

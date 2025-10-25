@@ -11,6 +11,7 @@ import cmsRoutes from "./cms/routes"
 import vehicleRoutes from "./vehicles/routes"
 import userRoutes from "./users/routes"
 import addOnRoutes from "./addons/routes"
+import customerSupportRoutes from "./customer_support/routes"
 
 const router = Router()
 
@@ -26,5 +27,6 @@ router.use("/cms", cmsRoutes);
 router.use("/vehicle", vehicleRoutes);
 router.use("/users", userRoutes);
 router.use("/addons", addOnRoutes);
+router.use("/customer-support", customerSupportRoutes);
 
 export default router;

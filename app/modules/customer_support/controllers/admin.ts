@@ -1,37 +1,49 @@
 import { Request, Response } from "express";
 import { sendResponse } from "@app/utils/common";
 import { asyncHandler } from "@app/middleware/async";
-import { AddonService } from "../services/addons";
+import { CustomerSupportService } from "../services/customerSupport";
 
-const addAddon = asyncHandler(async (req: Request, res: Response) => {
-    const response = await AddonService.addAddon(req);
+const createTicket = asyncHandler(async (req: Request, res: Response) => {
+    const response = await CustomerSupportService.createTicket(req);
     return sendResponse(res, response);
 });
 
-const updateAddon = asyncHandler(async (req: Request, res: Response) => {
-    const response = await AddonService.updateAddon(req);
+const getTicket = asyncHandler(async (req: Request, res: Response) => {
+    const response = await CustomerSupportService.getTicket(req);
     return sendResponse(res, response);
 });
 
-const getAddon = asyncHandler(async (req: Request, res: Response) => {
-    const response = await AddonService.getAddon(req);
+const updateTicket = asyncHandler(async (req: Request, res: Response) => {
+    const response = await CustomerSupportService.updateTicket(req);
     return sendResponse(res, response);
 });
 
-const deleteAddon = asyncHandler(async (req: Request, res: Response) => {
-    const response = await AddonService.deleteAddon(req);
+const deleteTicket = asyncHandler(async (req: Request, res: Response) => {
+    const response = await CustomerSupportService.deleteTicket(req);
     return sendResponse(res, response);
 });
 
-const getAddonList = asyncHandler(async (req: Request, res: Response) => {
-    const response = await AddonService.list(req);
+const listTickets = asyncHandler(async (req: Request, res: Response) => {
+    const response = await CustomerSupportService.listTickets(req);
+    return sendResponse(res, response);
+});
+
+const sendMessage = asyncHandler(async (req: Request, res: Response) => {
+    const response = await CustomerSupportService.sendMessage(req);
+    return sendResponse(res, response);
+});
+
+const deleteMessage = asyncHandler(async (req: Request, res: Response) => {
+    const response = await CustomerSupportService.deleteMessage(req);
     return sendResponse(res, response);
 });
 
 export default {
-    addAddon,
-    updateAddon,
-    getAddon,
-    deleteAddon,
-    getAddonList,
+    createTicket,
+    getTicket,
+    updateTicket,
+    deleteTicket,
+    listTickets,
+    sendMessage,
+    deleteMessage,
 };
