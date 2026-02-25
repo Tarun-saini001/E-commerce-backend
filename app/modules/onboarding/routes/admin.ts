@@ -12,7 +12,27 @@ import { verify } from "@app/middleware/checkRole";
 import Onboarding from "../controllers/admin";
 
 const router = Router();
-
+/**
+ * @swagger
+ * /onboarding/admin/login:
+ *   post:
+ *     summary: Admin login
+ *     tags: [Onboarding]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful
+ */
 router.post("/login", Validator(login), Onboarding.login);
 router.post("/send-otp", Validator(sendOtp), Onboarding.sendOtp);
 router.post("/verify-otp", Validator(verifyOtp), Onboarding.verifyOtp);

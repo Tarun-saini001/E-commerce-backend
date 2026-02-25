@@ -45,7 +45,7 @@ export const verifyOtp = z.object({
   deviceType: z.nativeEnum(DEVICETYPE).optional()
 });
 
-export type VerifyOtpType = z.infer<typeof verifyOtp>;
+export type   VerifyOtpType = z.infer<typeof verifyOtp>;
 
 export const pointSchema = z.object({
   type: z.literal("Point"),

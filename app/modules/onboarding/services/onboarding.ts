@@ -84,6 +84,7 @@ export const Onboarding = {
 
     verifyOtp: async (req: Request) => {
         const body: VerifyOtpType = req.body;
+        console.log('body: ', body);
         if (!body.email && !body.phone) {
             return createErrorResponse(RESPONSE_STATUS.BAD_REQUEST, req.t("INVALID_INPUT"));
         }
@@ -98,7 +99,7 @@ export const Onboarding = {
             return createErrorResponse(RESPONSE_STATUS.BAD_REQUEST, req.t("INVALID_OTP"));
         }
 
-        if (otpResult.expiresAt && isExpired(otpResult.expiresAt)) {
+        if (otpResult.expiresAt && isExpired(otpResult.expiresAt)){
             return createErrorResponse(RESPONSE_STATUS.BAD_REQUEST, req.t("OTP_EXPIRED"));
         }
 
@@ -314,7 +315,6 @@ export const Onboarding = {
                 req.t("INVALID_ID"),
             );
         }
-
         return createSuccessResponse(undefined, req.t("ACCOUNT_DELETED_SUCCESSFULLY"));
     },
 

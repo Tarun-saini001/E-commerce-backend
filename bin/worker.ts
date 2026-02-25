@@ -1,11 +1,16 @@
 import 'dotenv/config';
 import mongoose from 'mongoose';
-import agenda from './agenda';
-import releaseHoldVehicles from '@app/jobs/vehicles';
+import Agenda from "agenda";
+const uri = process.env.MONGO_URI + "/" + process.env.MONGO_DB_NAME;
+
+const agenda = new Agenda({
+    db: { address: uri, collection: "jobs" },
+    processEvery: '30 seconds'
+});
 
 (async () => {
     try {
-        releaseHoldVehicles(agenda);
+        // functions for agenda jobs should be defined and imported here
         await agenda.start();
         console.log(`[${process.pid}] Agenda Worker started`);
     } catch (err) {

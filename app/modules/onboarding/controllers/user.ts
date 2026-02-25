@@ -5,7 +5,7 @@ import { asyncHandler } from "@app/middleware/async";
 
 const login = asyncHandler(async (req: Request, res: Response) => {
     const response = await Onboarding.login(req);
-    return sendResponse(res, response);
+    return sendResponse(res, response); 
 });
 
 const sendOtp = asyncHandler(async (req: Request, res: Response) => {

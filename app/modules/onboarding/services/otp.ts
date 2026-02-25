@@ -48,8 +48,8 @@ export const verifyPhoneOtp = async (
         otp: otp,
         otpType
     })
-        .sort({ createdAt: -1 })
-        .exec();
+    .sort({ createdAt: -1 })
+    .exec();
 
     if (!foundOTP) {
         return {

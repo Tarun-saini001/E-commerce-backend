@@ -14,6 +14,7 @@ const userSchema = new Schema(
                 phone: { type: String },
                 password: { type: String },
                 socialId: { type: String },
+                guestId:{type:String},
                 socialProvider: { type: String, enum: Object.values(SOCIAL_LOGIN) },
                 role: { type: Number, enum: Object.values(ROLES) },
                 profileSteps: { type: Number, enum: Object.values(PROFILE_STEPS) },

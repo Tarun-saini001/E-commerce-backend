@@ -329,3 +329,13 @@ export const SUPPORT_STATUS = {
     RESOLVED: 3,
     CLOSED: 4
 }
+
+export const FIELDS_TYPES ={
+    SINGLE:1,
+    MULTIPLE:2
+}
+
+export const COUPON_TYPE ={
+    PERCENTAGE:1,
+    FIXED:2,
+}

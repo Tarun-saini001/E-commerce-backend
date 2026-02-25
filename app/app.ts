@@ -13,6 +13,7 @@ import helmet from "helmet";
 import { decryptInput } from "./utils/encryption";
 import { errorHandler } from "./middleware/error";
 import { seedData } from "./utils/seed";
+// import { setupSwagger } from "docs/swagger";
 
 dotenv.config({ path: ".env" });
 
@@ -35,13 +36,14 @@ const rateLimiter = rateLimit({
   },
 });
 
-app.use(helmet());
+app.use(helmet());//for secure methods
 app.use(rateLimiter);
-app.use(checkPortal);
+app.use(checkPortal);//identify  admin request or user request
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+// setupSwagger(app);
 
 if (process.env.NODE_ENV === "prod") {
   app.use(requestLogger);
@@ -52,14 +54,14 @@ if (process.env.NODE_ENV === "dev") {
 }
 
 app.use(
-  morgan("combined", {
+  morgan("combined", {// logs simplification
     stream: {
       write: (message) => logger.info(message.trim()),
     },
   }),
 );
 
-initI18n().then((i18nMiddleware) => {
+initI18n().then((i18nMiddleware) => {//language translation
   app.use(i18nMiddleware);
   app.use(decryptInput);
   app.use(routes);
