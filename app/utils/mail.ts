@@ -13,11 +13,20 @@ interface MailOptions {
   attachments?: { filename: string; path: string }[];
 }
 
+// const transporter = nodemailer.createTransport({
+//   service: "Mailgun",
+//   auth: {
+//     user: process.env.MAILGUN_USER!,
+//     pass: process.env.MAILGUN_PASSWORD!,
+//   },
+// });
 const transporter = nodemailer.createTransport({
-  service: "Mailgun",
+  host: "smtp.gmail.com",
+  port: 465, // or 587 for TLS
+  secure: true, // true for 465, false for 587
   auth: {
-    user: process.env.MAILGUN_USER!,
-    pass: process.env.MAILGUN_PASSWORD!,
+    user: process.env.GMAIL_USER,      // your Gmail address
+    pass: process.env.GMAIL_APP_PASSWORD,  // your app password
   },
 });
 
@@ -26,14 +35,21 @@ export const sendMail = async (obj: MailOptions) => {
 
   let htmlText = "";
   if (obj.template) {
+    // const templatePath = path.join(process.cwd(), "app", obj.template, "html.ejs");
+    // Correct template path resolution
     const templatePath = path.join(process.cwd(), obj.template, "html.ejs");
-    htmlText = await ejs.renderFile(templatePath, (error: Error | null, result: string | null) => {
-      if (error) {
-        console.error(error);
-        return null;
-      }
-      return result;
-    }, { cache: false });
+    // htmlText = await ejs.renderFile(templatePath, (error: Error | null, result: string | null) => {
+    //   if (error) {
+    //     console.error(error);
+    //     return null;
+    //   }
+    //   return result;
+    // }, { cache: false });
+    htmlText = await ejs.renderFile(
+      templatePath,
+      obj.data || {},   // ✅ pass template data here
+      { cache: false }
+    );
   }
 
   const mailOpts = {

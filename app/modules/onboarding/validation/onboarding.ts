@@ -10,10 +10,11 @@ import {
 
 export const sendOtp = z
   .object({
-    role: z.number().optional(),
+    role: z.nativeEnum(ROLES).optional(),
     otpType: z.nativeEnum(OTP_FOR),
     phone: z.string().regex(/^[0-9]+$/).min(8).max(15).optional(),
     email: z.string().email("Please Enter a valid email").optional(),
+    name: z.string(),
     countryCode: z
       .string()
       .regex(/^\+\d{1,3}$/)
@@ -26,7 +27,7 @@ export const sendOtp = z
 export type SendOtpType = z.infer<typeof sendOtp>;
 
 export const verifyOtp = z.object({
-  role: z.number().optional().refine(
+  role:  z.nativeEnum(ROLES).optional().refine(
     (val) =>
       val === undefined ||
       ([ROLES.USER, ROLES.BUSINESS] as number[]).includes(val),
@@ -42,10 +43,12 @@ export const verifyOtp = z.object({
   secretPin: z.string().optional(),
   password: z.string().optional(),
   deviceToken: z.string().optional(),
-  deviceType: z.nativeEnum(DEVICETYPE).optional()
+  deviceType: z.nativeEnum(DEVICETYPE).optional(),
+  name: z.string().optional(),
+  fullName: z.string().optional(),
 });
 
-export type   VerifyOtpType = z.infer<typeof verifyOtp>;
+export type VerifyOtpType = z.infer<typeof verifyOtp>;
 
 export const pointSchema = z.object({
   type: z.literal("Point"),
@@ -125,7 +128,7 @@ export const login = z
 export type LoginType = z.infer<typeof login>;
 
 export const socialLoginSchema = z.object({
-  role: z.number(),
+  role:  z.nativeEnum(ROLES),
   socialId: z.string().min(1, "Social ID is required"),
   socialType: z.nativeEnum(SOCIAL_LOGIN),
   email: z.string().email("Invalid email").optional(),

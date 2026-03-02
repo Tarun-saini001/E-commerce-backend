@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import dotenv from "dotenv";
+dotenv.config({ path: ".env" });
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import morgan from "morgan";
@@ -15,7 +16,6 @@ import { errorHandler } from "./middleware/error";
 import { seedData } from "./utils/seed";
 // import { setupSwagger } from "docs/swagger";
 
-dotenv.config({ path: ".env" });
 
 const app = express();
 

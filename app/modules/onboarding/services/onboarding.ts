@@ -25,6 +25,7 @@ import Session from "../models/session";
 import { ChangePasswordType, LoginType, SendOtpType, SocialLoginType, UpdateProfileType, VerifyOtpType } from "../validation/onboarding";
 import { Request } from "express";
 import { ValidateUserAuthResponse } from "@app/types/others";
+import { sendMail } from "@app/utils/mail";
 
 export const Onboarding = {
     sendOtp: async (req: Request) => {
@@ -54,7 +55,7 @@ export const Onboarding = {
                 if (existsError) return existsError;
                 break;
         }
-
+        const otp = generateNumber(4);
         await Otp.findOneAndUpdate(
             {
                 email: body.email || null,
@@ -67,7 +68,8 @@ export const Onboarding = {
                     email: body.email,
                     phone: body.phone,
                     countryCode: body.countryCode,
-                    otp: process.env.NODE_ENV === "prod" ? generateNumber(4) : "1234",
+                    // otp: process.env.NODE_ENV === "prod" ? generateNumber(4) : "1234",
+                    otp: otp,
                     otpType: Number(body.otpType || OTP_FOR.REGISTER),
                     expiresAt: await getExpireDate(FORGOT_PASSWORD_WITH.EXPIRE_TIME),
                 },
@@ -78,6 +80,29 @@ export const Onboarding = {
                 setDefaultsOnInsert: true,
             }
         );
+        if (!body.email) {
+            return createErrorResponse(
+                RESPONSE_STATUS.BAD_REQUEST,
+                "Email is required to send OTP"
+            );
+        }
+        console.log("GMAIL_USER:", process.env.GMAIL_USER);
+        console.log("GMAIL_APP_PASSWORD:", process.env.GMAIL_APP_PASSWORD);
+        try {
+            await sendMail({
+                from: process.env.GMAIL_USER,
+                to: body.email,
+                subject: "Your OTP is..",
+                template: "app/views/email/OTP",
+                data: {
+                    userName: body.name || body.email,
+                    otp,
+                },
+            });
+        } catch (error) {
+            console.error("Failed to send OTP email:", error);
+            return createErrorResponse(RESPONSE_STATUS.INTERNAL_SERVER_ERROR, "Failed to send OTP email");
+        }
         let data = createSuccessResponse(req.t("OTP_SENT_SUCCESSFULLY"));
         return data;
     },
@@ -99,7 +124,7 @@ export const Onboarding = {
             return createErrorResponse(RESPONSE_STATUS.BAD_REQUEST, req.t("INVALID_OTP"));
         }
 
-        if (otpResult.expiresAt && isExpired(otpResult.expiresAt)){
+        if (otpResult.expiresAt && isExpired(otpResult.expiresAt)) {
             return createErrorResponse(RESPONSE_STATUS.BAD_REQUEST, req.t("OTP_EXPIRED"));
         }
 
@@ -147,6 +172,7 @@ export const Onboarding = {
                 const userData = {
                     ...buildUserQuery(body),
                     role: userRole,
+                    fullName: body.name || body.fullName,
                     isEmailVerified: !!body.email,
                     isPhoneVerified: !!body.phone,
                     isPasswordSet: !!body.password,
@@ -171,7 +197,13 @@ export const Onboarding = {
             countryCode: body.countryCode,
             otpType: Number(body.otpType),
         });
-        return createSuccessResponse({ ...result, permission: user.permission }, req.t("OTP_VERIFIED_SUCCESSFULLY"));
+        // return createSuccessResponse({ ...result, permission: user.permission }, req.t("OTP_VERIFIED_SUCCESSFULLY"));
+        return createSuccessResponse({
+            token: result.token,
+            tokenType: result.tokenType,
+            name: user.fullName || user.name,
+            email: user.email
+        }, req.t("OTP_VERIFIED_SUCCESSFULLY"));
     },
 
     updateProfile: async (req: Request) => {
@@ -320,6 +352,7 @@ export const Onboarding = {
 
     login: async (req: Request) => {
         const body: LoginType = req.body;
+        // 
         const role = await getUserRole(body.email);
         if (!role) {
             return createErrorResponse(
@@ -527,3 +560,4 @@ export const Onboarding = {
 };
 
 export default Onboarding;
+
